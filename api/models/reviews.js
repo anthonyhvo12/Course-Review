@@ -20,7 +20,7 @@ const Review = mongoose.model('Review', {
     numRating: {
         type: Number,
         validate(value) {
-            if (!validator.isInt(value, {min : 1, max : 5})) {
+            if (!(1 <= value <= 5)) {
                 throw new Error('Invalid rating - must be between 1 and 5')
             }
         }
