@@ -17,7 +17,8 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use(logger('dev'));
+// app.use(logger('dev'));
+app.use(logger('combined'))
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

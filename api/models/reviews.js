@@ -17,6 +17,11 @@ const Review = mongoose.model('Review', {
         required: true,
         trim: true
     },
+    instructor: {
+        type: String,
+        required: true,
+        trim: true
+    },
     numRating: {
         type: Number,
         validate(value) {
