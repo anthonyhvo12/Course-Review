@@ -9,6 +9,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var testAPIRouter = require('./routes/testAPI');
 var reviewsRouter = require('./routes/reviews');
+var collegesRouter = require('./routes/colleges');
 require('./db/mongoose.js') //need to require this for mongoose to run
 
 var app = express();
@@ -29,6 +30,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/testAPI', testAPIRouter);
 app.use('/reviews', reviewsRouter)
+app.use('/colleges', collegesRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

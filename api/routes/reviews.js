@@ -13,16 +13,10 @@ router.post('/', async (req,res) => {
     }
 })
 
-router.post('/get', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const params = Object.keys(req.body)
-        console.log(params)
-        params.forEach((param) => {
-            if (req.body[param] === '') {
-                throw new Error('Params cannot be blank')
-            }
-        })
-        const reviews = await Review.find(req.body)
+        const reviews = await Review.find(req.query)
+        console.log('reviews')
         if (!reviews) {
             res.status(400).send('Review not found!')
         }
@@ -33,13 +27,13 @@ router.post('/get', async (req, res) => {
     }
 })
 
-// also use post for patch??
-router.post('/:id', async (req, res) => {
+router.patch('/:id', async (req, res) => {
     // find this user
     // apply each update with foreach
     const updates = Object.keys(req.body)
     try {
-        const review = await Review.findOne(req.params.id)
+        const review = await Review.findById(req.params.id)
+        console.log(review)
         if (!review) {
             res.status(404).send('Review not found!')
         }
@@ -47,20 +41,20 @@ router.post('/:id', async (req, res) => {
 
         //must also save review
         await review.save()
-        res.send(review)
+        res.send(review) //200 code
     }
     catch (e) {
         res.status(400).send(e)
     }
 })
 // delete
-router.post('/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
         const review = await Review.findByIdAndDelete(req.params.id)
         if (!review) {
             res.status(404).send('Review not found!')
         }
-        res.send(review)
+        res.send(review) //204 code
     }
     catch (e) {
         res.status(400).send(e)

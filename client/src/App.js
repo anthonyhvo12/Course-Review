@@ -5,8 +5,15 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link
+    Link,
+    withRouter
 } from "react-router-dom";
+// import { exists, db } from "../../api/models/reviews";
+import _ from 'lodash';
+import Select from "react-select";
+
+const loadColleges = require('./loadColleges.js')
+
 
 class App extends Component {
     constructor(props) {
@@ -38,10 +45,15 @@ class App extends Component {
                                 <Route path="/" exact={true}>
                                     <Index/>
                                 </Route>
-                                <Route path="/reviews">
+                                <Route path="/reviews/submit">
                                     {/* <Reviews/> */}
-                                    <Reviews apiCall = {this.state.apiCall}/>
+                                    {/* <Reviews apiCall = {this.state.apiCall}/> */}
+                                    <Submission/>
                                 </Route>
+                                <Route path="/reviews/search">
+                                    <SearchForm/>
+                                </Route>
+                            
                             </Switch>
                         </div>
                     
@@ -56,16 +68,122 @@ class App extends Component {
 function Index() {
     console.log("Calling index")
     return (
-        <Link id="submitLnk" to="/reviews">Submit a review here</Link>
+        <Link id="submitLnk" to="/reviews/submit">Submit a review here</Link>
     )
 }
 
-// TODO: handle submit button
-// write a function to send to backend
-// fetch api response from backend
-// stuck - how to call api? - using hooks from this func or call app?
-// should review have its own states? - not really saving the user data so no??
-function Reviews(props) {
+class SearchForm extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            fullList: "",
+            filteredList: [],
+            typing: false,
+            typingTimeout: 0
+        }
+    }
+
+    async callAPI() {
+        const list = await loadColleges()
+    //extract college name from this list, put in uniList
+        const tempList = []
+        list.forEach((college) => {
+            // console.log(college)
+            tempList.push({'value': college.Name, 'label': college.Name})
+        })
+        this.setState({fullList: tempList})
+    }
+
+    componentDidMount() {
+        this.callAPI()
+    }
+
+    filterColleges() {
+        _.debounce((searchTerm) => {
+            const list = this.state.fullList.filter((name) => {
+                return name.includes(searchTerm)
+            })
+            this.setState({filteredList: list})
+        }, 500)
+    }
+
+    // getColleges(searchTerm, callback) {
+    //     filterColleges(searchTerm)
+    //     .then((result) => callback(null, {options: result})
+    //     .catch((error) => callback(error, null)))
+    // }
+
+    render() {
+        return (
+            <div>
+                <form id="form" target="_blank"></form>
+                {/* display a list of colleges from db */}
+                <label className="title" htmlFor="college">Enter the name of the college or university: </label> 
+                {/* tried asyncselect */}
+                <Select isSearchable={true} options={this.state.fullList} onInputChange={this.filterColleges}/>
+            </div>
+        )
+    }
+}
+// a button for inputting college name
+// which redirects user to a new page with all departments and review from that college
+// how about: college => dpm => couseNo => instructor
+// college: onPress event call to db, if doesnt exists, throw an error
+// display: a list of everything?
+// at each step , append to query object
+// a link to click on courses
+
+// function SearchForm(props) {
+
+//     const [collegeList, setCollegeList] = React.useState("")
+//     const [typing, setTypingTimeout]
+//     // Jul16: load unis to this arr
+//     // useEffect will update the select with api call
+//     // need to assign a ref to the select <old sln>
+
+//     //0718
+//     //NEW SLN: make the select refer to a state named uniList
+//     //uniList gets updated with api calls
+    
+//     useEffect(() => {
+//         let mounted = true
+
+        
+//         async function callAPI() {
+//             const list = await loadColleges()
+//         //extract college name from this list, put in uniList
+//             const tempList = []
+//             list.forEach((college) => {
+//                 // console.log(college)
+//                 tempList.push({'value': college.Name, 'label': college.Name})
+//             })
+//             console.log(tempList)
+//             if (mounted) { //componentdidmount
+//                 setCollegeList(tempList.slice(1,10))
+//             }
+//         }
+//         callAPI()
+//         return function cleanup() { //componentdidUnmount
+//             mounted = false
+//         }
+//     })
+//     // for each entry in colleges:...
+//     return (
+//         <div>
+//             <form id="form" target="_blank"></form>
+//               {/* display a list of colleges from db */}
+//               <label className="title" htmlFor="college">Enter the name of the college or university: </label> 
+//               <Select options = {debounce(this.getColleges, 500)}/>
+//         </div>
+
+//     )
+// }
+
+
+
+// export default withRouter(UniListParser);
+
+function Submission(props) {
 
     const [apiResponse, setResponse] = React.useState("")
     

@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
-const validator = require('validator')
 
-const Review = mongoose.model('Review', {
+const reviewSchema = mongoose.Schema({
     collegeName: {
         type: String,
         required: true,
@@ -24,8 +23,9 @@ const Review = mongoose.model('Review', {
     },
     numRating: {
         type: Number,
+        required: true,
         validate(value) {
-            if (!(1 <= value <= 5)) {
+            if (!(1 <= value && value <= 5)) {
                 throw new Error('Invalid rating - must be between 1 and 5')
             }
         }
@@ -35,6 +35,10 @@ const Review = mongoose.model('Review', {
         required: true,
         trim: true
     }
+}, {
+    timestamps: true
 })
+
+const Review = mongoose.model('Review', reviewSchema)
 
 module.exports = Review
