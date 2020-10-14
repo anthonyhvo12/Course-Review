@@ -4,5 +4,7 @@ A Course Review Application that allows users to select a course from a college 
 Author: Anthony Vo and The Gydable Team
 
 ## Technologies:
+</br>
 Frontend: React
+</br>
 Backend: Express.js, Node.js, MongoDB
